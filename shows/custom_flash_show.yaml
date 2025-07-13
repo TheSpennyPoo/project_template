@@ -1,9 +1,0 @@
-#show_version=6
-##! show: custom_flash_show
-
-    - duration: 500ms
-      lights:
-          (which): (color)
-    - duration: 500ms
-      lights:
-          (which): off

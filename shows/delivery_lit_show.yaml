@@ -1,9 +1,0 @@
-#show_version=6
-##! show: delivery_lit_show
-
-    - duration: 300ms
-      lights:
-          l_delivery_shot_insert: d86c92
-    - duration: 300ms
-      lights:
-          l_delivery_shot_insert: ffffff

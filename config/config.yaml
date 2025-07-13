@@ -1,89 +1,34 @@
 #config_version=6
 
-custom_code:
-    - code.zoidberg.Zoidberg
-
-event_player:
-  init_done: reset_zoidberg_stepper
-
-#this
 virtual_platform_start_active_switches:
     - s_trough1
     - s_trough2
     - s_trough3
 
-settings:
-    target_points:
-        label: Target Points
-        values:
-            25: "25 (default)"
-            250: "250 (bally/williams)"
-            2500: "2500 (Stern)"
-        default: 25
-        key_type: int
-        sort: 100
-
-
-#update this as well
 keyboard:
-    s:
-        switch: s_start
-    c:
-        switch: s_cap1
-    b:
-        event: light_suicide_booth
-    t:
-        event: test_light_show
-    e:
-        event: reset_bender_eyes
+    shift+l:
+        event: zoidberg_left
+    shift+r:
+        event: zoidberg_right
+    shift+0:
+        event: zoidberg_reset
     r:
-        event: eyes_right
-    l:
-        event: eyes_left
-    h:
-        event: reset_bender_head
-    1:
-        event: head_left
-    2:
-        event: head_right
+        event: post_left_down
+
 hardware:
     platform: p3_roc
     stepper_controllers: pololu_tic
 
-
 p_roc:
     driverboards: pdb
-    pd_led_boards:
-        4:
-            max_servo_value: 300
-            use_servo_0: true
-            use_servo_1: true
-
-servos:
-    bender_eyes:
-        positions:
-            0.1: eyes_left
-            0.9: eyes_right
-        reset_position: 0.5
-        reset_events: reset_bender_eyes
-        number: 4-0
-    bender_head:
-        positions:
-            0.2: head_left
-            0.8: head_right
-        reset_position: 0.5
-        reset_events: reset_bender_head
-        number: 4-1
-
 
 steppers:
     zoidberg_stepper:
         number: "00427235"
-        pos_max: 500000
-        pos_min: -500000
-        homing_mode: hardware
-        reset_events: mode_attract_started
-        relative_positions:
+        pos_max: 4000
+        pos_min: -4000
+        reset_events: zoidberg_reset
+        named_positions:
             -200: zoidberg_r1
             200: zoidberg_l1
             -400: zoidberg_r2
@@ -128,385 +73,303 @@ steppers:
             current_limit: 880
             max_acceleration: 10000
             max_speed: 4000000
-            starting_speed: 10000
+            starting_speed: 1000000
+
+event_player:
+    ball_ending: zoidberg_reset
+    mode_attract_started: zoidberg_reset
 
 light_settings:
     default_fade_ms: 40
 
 lights:
-#remember, the reason the boards here are listed as 0, 2, and 4
-#is because they are DRIVER BOARDS
-#0, 2, and 4, since with P3 the driver and LED boards share address space.
-
-#also: p3 flashers are polarity=true
-#all other RGB lights should be polarity=false
-    l_right_corner1:
-        number: 2-12-13-14
-        platform_settings:
-            polarity: false
-        tags: lamps, gi
-    l_right_corner2:
-        number: 2-15-16-17
+    l_right_corner:
+        number: 1-0-1-2
         platform_settings:
             polarity: false
         tags: lamps, gi
     l_right_upper_wedge:
-        number: 2-57-58-59
+        number: 1-3-4-5
         platform_settings:
             polarity: false
         tags: lamps, gi
-    l_right_orbit_insert1:
-        number: 2-39-40-41
+    l_zapp_indicator:
+        number: 1-6-7-8
         platform_settings:
-            polarity: true
-        tags: lamps, indicator, orbit
-    l_right_orbit_insert2:
-        number: 2-36-37-38
+            polarity: false
+        tags: lamps, test
+    l_right_orbit:
+        number: 1-9-10-11
         platform_settings:
-            polarity: true
-        tags: lamps, indicator, orbit
-    l_left_ramp_insert:
-        number: 2-48-49-50
-        platform_settings:
-            polarity: true
+            polarity: false
         tags: lamps, indicator
-    l_left_loop_insert:
-        number: 2-51-52-53
-        platform_settings:
-            polarity: true
-        tags: lamps, indicator, loops
-    l_delivery_shot_insert:
-        number: 2-54-55-56
-        platform_settings:
-            polarity: true
-        tags: lamps, indicator
-    l_right_ramp_insert:
-        number: 2-42-43-44
-        platform_settings:
-            polarity: true
-        tags: lamps, indicator
-    l_right_loop_insert:
-        number: 2-45-46-47
-        platform_settings:
-            polarity: true
-        tags: lamps, indicator, loops
     l_PE_spinner1:
-        number: 2-24-25-26
+        number: 1-12-13-14
         platform_settings:
-            polarity: true
+            polarity: false
         tags: lamps, ship, feature
     l_PE_spinner2:
-        number: 2-27-28-29
+        number: 1-15-16-17
         platform_settings:
-            polarity: true
+            polarity: false
         tags: lamps, ship, feature
     l_PE_spinner3:
-        number: 2-30-31-32
+        number: 1-18-19-20
         platform_settings:
-            polarity: true
+            polarity: false
         tags: lamps, ship, feature
     l_PE_spinner4:
-        number: 2-33-34-35
+        number: 1-21-22-23
         platform_settings:
-            polarity: true
+            polarity: false
         tags: lamps, ship, feature
-    l_DTGI1:
-        number: 2-60-61-62
+    l_left_loop:
+        number: 1-24-25-26
+        platform_settings:
+            polarity: false
+        tags: lamps, feature, loops
+    l_nibbler_lamp:
+        number: 1-27-28-29
+        platform_settings:
+            polarity: false
+        tags: lamps, feature
+    l_left_corner_plastic:
+        number: 1-30-31-32
+        platform_settings:
+            polarity: false
+        tags: lamps, gi
+    l_slurm_can:
+        number: 1-33-34-35
+        platform_settings:
+            polarity: false
+        tags: lamps, gi
+    l_DTbank1:
+        number: 1-36-37-38
         platform_settings:
             polarity: false
         tags: lamps, gi, DTbank
-    l_DTGI2:
-        number: 2-63-64-65
+    l_DTbank2:
+        number: 1-39-40-41
         platform_settings:
             polarity: false
         tags: lamps, gi, DTbank
-    l_hypnotoad_spotlight:
-        number: 2-69-70-71
+    l_DTbank3:
+        number: 1-42-43-44
         platform_settings:
             polarity: false
-        tags: lamps, spotlights
+        tags: lamps, gi, DTbank
     l_left_spotlight:
-        number: 2-66-67-68
+        number: 1-45-46-47
         platform_settings:
             polarity: false
         tags: lamps, spotlights
     l_VUK1:
-        number: 2-6-7-8
+        number: 1-48-49-50
         platform_settings:
             polarity: false
         tags: lamps, tubes
     l_VUK2:
-        number: 2-9-10-11
+        number: 1-51-52-53
         platform_settings:
             polarity: false
         tags: lamps, tubes
-    l_HQGI1:
-        number: 2-0-1-2
+    l_scoop:
+        number: 1-54-55-56
         platform_settings:
             polarity: false
-        tags: lamps, HQ, gi
-    l_HQGI2:
-        number: 2-3-4-5
+        tags: lamps, feature
+    l_under_HQ:
+        number: 1-57-58-59
         platform_settings:
             polarity: false
-        tags: lamps, HQ, gi
-    l_HQ1:
-        number: 2-18-19-20
-        platform_settings:
-            polarity: false
-        tags: lamps, HQ
-    l_HQ2:
-        number: 2-21-22-23
-        platform_settings:
-            polarity: false
-        tags: lamps, HQ
+        tags: lamps, indicator
     l_tube2:
-        number: 2-75-76-77
+        number: 1-60-61-62
         platform_settings:
             polarity: false
         tags: lamps, tubes
     l_tube1:
-        number: 2-72-73-74
+        number: 1-63-64-65
         platform_settings:
             polarity: false
         tags: lamps, tubes
     l_tube3:
-        number: 2-78-79-80
+        number: 1-66-67-68
         platform_settings:
             polarity: false
         tags: lamps, tubes
     l_tube4:
-        number: 2-81-82-83
+        number: 1-69-70-71
         platform_settings:
             polarity: false
         tags: lamps, tubes
+    l_PEHQ1:
+        number: 1-72-73-74
+        platform_settings:
+            polarity: false
+        tags: lamps, HQ
+    l_PEHQ2:
+        number: 1-75-76-77
+        platform_settings:
+            polarity: false
+        tags: lamps, HQ
+    l_PEHQ3:
+        number: 1-78-79-80
+        platform_settings:
+            polarity: false
+        tags: lamps, HQ
+    l_right_loop:
+        number: 1-81-82-83
+        platform_settings:
+            polarity: false
+        tags: lamps, feature, loops
     l_shoot_again:
-        number: 0-24-25-26
+        number: 2-0-1-2
         platform_settings:
             polarity: false
         tags: lamps, indicator
+    lamp30:
+        number: 2-3-4-5
+        platform_settings:
+            polarity: false
+        tags: lamps, test
     l_cap1:
-        number: 0-45-46-47
+        number: 2-6-7-8
         platform_settings:
             polarity: false
         tags: lamps, caps
+    lamp32:
+        number: 2-9-10-11
+        platform_settings:
+            polarity: false
+        tags: lamps, test
     l_right_sling:
-        number: 0-78-79-80
+        number: 2-12-13-14
         platform_settings:
             polarity: false
         tags: lamps, gi, slings
     l_2x:
-        number: 0-39-40-41
+        number: 2-15-16-17
         platform_settings:
             polarity: false
         tags: lamps, indicator
     l_3x:
-        number: 0-42-43-44
+        number: 2-18-19-20
         platform_settings:
             polarity: false
         tags: lamps, indicator
     l_cap2:
-        number: 0-48-49-50
+        number: 2-21-22-23
         platform_settings:
             polarity: false
         tags: lamps, caps
-    l_suicide_booth:
-        number: 0-51-52-53
-        platform_settings:
-            polarity: false
-        tags: lamps, indicator
     l_right_outlane:
-        number: 0-75-76-77
+        number: 2-24-25-26
         platform_settings:
             polarity: false
         tags: lamps, indicator
     l_right_inlane:
-        number: 0-81-82-83
+        number: 2-27-28-29
         platform_settings:
             polarity: false
         tags: lamps, caps
-    l_zoidberg_rotor:
-        number: 0-36-37-38
+    l_right_ballguide1:
+        number: 2-30-31-32
         platform_settings:
-            polarity: true
-        tags: lamps, feature
-    l_right_ballguide:
-        number: 0-72-73-74
+            polarity: false
+        tags: lamps, gi, ballguide
+    l_right_ballguide2:
+        number: 2-33-34-35
         platform_settings:
-            polarity: true
+            polarity: false
         tags: lamps, gi, ballguide
     l_cap3:
-        number: 0-54-55-56
+        number: 2-36-37-38
         platform_settings:
             polarity: false
         tags: lamps, caps
     l_pop_bumper:
-        number: 0-57-58-59
+        number: 2-39-40-41
         platform_settings:
             polarity: false
         tags: lamps, feature
-    l_drain:
-        number: 0-18-19-20
+    l_right_wedge:
+        number: 2-42-43-44
         platform_settings:
-            polarity: true
+            polarity: false
+        tags: lamps, gi
+    l_right_spotlight:
+        number: 2-45-46-47
+        platform_settings:
+            polarity: false
+        tags: lamps, spotlights
+    l_drain:
+        number: 2-48-49-50
+        platform_settings:
+            polarity: false
         tags: lamps, apron
     l_apron3:
-        number: 0-6-7-8
+        number: 2-51-52-53
         platform_settings:
-            polarity: true
+            polarity: false
         tags: lamps, apron
     l_apron2:
-        number: 0-3-4-5
+        number: 2-54-55-56
         platform_settings:
-            polarity: true
+            polarity: false
         tags: lamps, apron
     l_apron1:
-        number: 0-0-1-2
+        number: 2-57-58-59
         platform_settings:
-            polarity: true
+            polarity: false
         tags: lamps, apron
     l_apron4:
-        number: 0-9-10-11
+        number: 2-60-61-62
         platform_settings:
-            polarity: true
+            polarity: false
         tags: lamps, apron
     l_apron5:
-        number: 0-12-13-14
+        number: 2-63-64-65
         platform_settings:
-            polarity: true
+            polarity: false
         tags: lamps, apron
     l_apron6:
-        number: 0-15-16-17
+        number: 2-66-67-68
         platform_settings:
-            polarity: true
+            polarity: false
         tags: lamps, apron
     l_cryopod:
-        number: 0-21-22-23
+        number: 2-69-70-71
         platform_settings:
-            polarity: true
+            polarity: false
         tags: lamps, apron
     l_left_sling:
-        number: 0-27-28-29
+        number: 2-72-73-74
         platform_settings:
             polarity: false
         tags: lamps, gi, slings
     l_left_inlane:
-        number: 0-30-31-32
+        number: 2-75-76-77
         platform_settings:
             polarity: false
         tags: lamps, indicator
-    l_left_ballguide:
-        number: 0-33-34-35
+    l_left_ballguide1:
+        number: 2-78-79-80
         platform_settings:
-            polarity: true
+            polarity: false
         tags: lamps, gi, ballguide
-    l_bender_l_eye:
-        number: 4-60-61-62
-        tags: topper, eyes
+    l_left_ballguide2:
+        number: 2-81-82-83
         platform_settings:
             polarity: false
-    l_bender_r_eye:
-        number: 4-63-64-65
-        tags: topper, eyes
-        platform_settings:
-            polarity: false
-    l_bender_mouth1:
-        number: 4-66-67-68
-        tags: topper, mouth
-        platform_settings:
-            polarity: true
-    l_bender_mouth2:
-        number: 4-69-70-71
-        tags: topper, mouth
-        platform_settings:
-            polarity: true
-    l_bender_mouth3:
-        number: 4-48-49-50
-        tags: topper, mouth
-        platform_settings:
-            polarity: true
-    l_bender_mouth4:
-        number: 4-51-52-53
-        tags: topper, mouth
-        platform_settings:
-            polarity: true
-    l_backbox_top1:
-        number: 4-36-37-38
-        tags: backbox
-        platform_settings:
-            polarity: false
-    l_backbox_top2:
-        number: 4-39-40-41
-        tags: backbox
-        platform_settings:
-            polarity: false
-    l_backbox_top3:
-        number: 4-42-43-44
-        tags: backbox
-        platform_settings:
-            polarity: false
-    l_backbox_top4:
-        number: 4-45-46-47
-        tags: backbox
-        platform_settings:
-            polarity: false
-    l_backbox_top5:
-        number: 4-24-25-26
-        tags: backbox
-        platform_settings:
-            polarity: false
-    l_backbox_top6:
-        number: 4-27-28-29
-        tags: backbox
-        platform_settings:
-            polarity: false
-    l_backbox_top7:
-        number: 4-30-31-32
-        tags: backbox
-        platform_settings:
-            polarity: false
-    l_backbox_bottom1:
-        number: 4-0-1-2
-        tags: backbox
-        platform_settings:
-            polarity: false
-    l_backbox_bottom2:
-        number: 4-3-4-5
-        tags: backbox
-        platform_settings:
-            polarity: false
-    l_backbox_bottom3:
-        number: 4-6-7-8
-        tags: backbox
-        platform_settings:
-            polarity: false
-    l_backbox_bottom4:
-        number: 4-9-10-11
-        tags: backbox
-        platform_settings:
-            polarity: false
-    l_backbox_bottom5:
-        number: 4-12-13-14
-        tags: backbox
-        platform_settings:
-            polarity: false
-    l_backbox_bottom6:
-        number: 4-15-16-17
-        tags: backbox
-        platform_settings:
-            polarity: false
-    l_backbox_bottom7:
-        number: 4-18-19-20
-        tags: backbox
-        platform_settings:
-            polarity: false
+        tags: lamps, gi, ballguide
 
 switches:
     s_left_flipper:
         number: A2-B0-6
         tags: left_flipper
     s_right_flipper:
-        number: A2-B0-1
+        number: A2-B0-5
         tags: right_flipper
     s_mag_button:
         number: A2-B0-4
@@ -514,211 +377,181 @@ switches:
         number: A2-B0-3
         ignore_window_ms: 2000
     s_trough_jam:
-        number: A0-B1-0
+        number: A1-B1-7
         type: NC
     s_trough1:
-        number: A0-B1-1
+        number: A1-B1-6
         type: NC
     s_trough2:
-        number: A0-B0-1
+        number: A0-B0-2
         type: NC
     s_trough3:
         number: A0-B0-0
         type: NC
     s_shooter_lane:
-        number: A1-B1-0
+        number: A0-B0-1
     s_start:
         number: A2-B0-7
         tags: start
     s_cap1:
-        number: A0-B0-3
+        number: A0-B1-4
         tags: playfield_active
         debounce: normal
     s_cap2:
-        number: A1-B0-7
+        number: A0-B1-5
         tags: playfield_active
         debounce: normal
-    s_pop_bumper:
-        number: A1-B0-6
+    s_cap3:
+        number: A0-B0-5
+        tags: playfield_active
+        debounce: normal
     s_cap4:
-        number: A1-B0-5
+        number: A0-B0-3
         tags: playfield_active
         debounce: normal
     s_r_outlane:
-        number: A0-B0-2
+        number: A0-B0-4
         tags: playfield_active
     s_left_outlane:
-        number: A0-B0-7
+        number: A0-B1-0
         tags: playfield_active
-    s_suicide_booth:
-        number: A0-B1-7
-        type: NC
     s_left_inlane:
+        number: A0-B1-1
+        tags: playfield_active
+    s_pop_bumper:
         number: A0-B0-6
-        tags: playfield_active
-    s_cap3:
-        number: A1-B0-4
-        tags: playfield_active
-        debounce: normal
     s_left_sling:
-        number: A0-B0-5
+        number: A0-B1-2
     s_right_sling:
-        number: A0-B0-4
+        number: A0-B1-3
     s_VUK:
-        number: A1-B1-4
+        number: A1-B1-5
         type: NC
     s_pe_platter:
-        number: A1-B1-7
+        number: A1-B1-4
         tags: playfield_active
     s_r_orbit:
-        number: A1-B1-2
+        number: A1-B1-3
         tags: playfield_active
         type: NC
     s_left_ramp:
-        number: A1-B1-6
+        number: A1-B1-2
         tags: playfield_active
         type: NC
     s_left_loop:
-        number: A1-B1-5
+        number: A1-B1-1
         type: NC
     s_right_loop:
-        number: A1-B1-3
+        number: A1-B1-0
         type: NC
     s_dt_nibbler:
-        number: A0-B1-6
+        number: A1-B0-7
     s_dt_zoidberg:
-        number: A0-B1-5
+        number: A1-B0-6
     s_dt_professor:
-        number: A0-B1-4
-    s_dt_amy:
-        number: A0-B1-2
+        number: A1-B0-5
     s_dt_hermes:
-        number: A0-B1-3
-    s_t_leela:
+        number: A1-B0-4
+    s_dt_amy:
         number: A1-B0-3
+    s_t_leela:
+        number: A1-B0-2
         tags: playfield_active
         debounce: normal
     s_t_fry:
-        number: A1-B0-2
+        number: A1-B0-1
         tags: playfield_active
         debounce: normal
     s_t_bender:
-        number: A1-B0-1
+        number: A1-B0-0
         tags: playfield_active
         debounce: normal
     s_right_ramp:
-        number: A1-B0-0
+        number: A0-B0-7
         tags: playfield_active
         debounce: normal
-    s_motion_detector:
-        number: A2-B1-0
-        tags: motion_detector, cabinet
-        debounce: normal
-    s_oper1:
-        number: A2-B1-1
-        tags: service_enter
-    s_oper2:
-        number: A2-B1-2
-        tags: service_up
-    s_oper3:
-        number: A2-B1-3
-        tags: service_down
-    s_oper4:
-        number: A2-B1-4
-        tags: service_esc
-    s_coin_door:
-        number: A2-B1-5
-        tags: service_door_open, power_off
-    s_tilt:
-        number: A2-B0-2
-        tags: tilt_bob
-
-
-
-
 
 coils:
     c_flipper_left_main:
-        number: A1-B0-6
-        default_pulse_ms: 26
+        number: A0-B0-6
+        default_pulse_ms: 22
     c_flipper_left_hold:
-        number: A1-B0-7
+        number: A0-B0-7
         allow_enable: true
-        default_hold_power: 1
     c_flipper_right_main:
-        number: A1-B1-6
-        default_pulse_ms: 26
+        number: A0-B1-6
+        default_pulse_ms: 22
     c_flipper_right_hold:
-        number: A1-B1-7
+        number: A0-B1-7
         allow_enable: true
-        default_hold_power: 1
     c_plunger:
-        number: A3-B0-7
-        default_pulse_ms: 17
+        number: A1-B0-7
+        default_pulse_ms: 18
     c_trough_eject:
-        number: A3-B0-6
-        default_pulse_ms: 24
+        number: A1-B0-6
+        default_pulse_ms: 12
     c_sling_left:
-        number: A3-B0-3
+        number: A1-B0-3
         default_pulse_ms: 8
     c_sling_right:
-        number: A3-B0-4
+        number: A1-B0-4
         default_pulse_ms: 8
     c_post_right:
-        number: A3-B1-3
+        number: A1-B1-3
         default_pulse_ms: 10
         default_hold_power: .3
     c_dt_hermes_down:
-        number: A1-B0-0
+        number: A0-B0-0
         default_pulse_ms: 10
     c_dt_amy_down:
-        number: A1-B0-1
+        number: A0-B0-1
         default_pulse_ms: 10
     c_dt_professor_down:
-        number: A1-B0-2
+        number: A0-B0-2
         default_pulse_ms: 10
     c_dt_zoidberg_down:
-        number: A1-B0-3
+        number: A0-B0-3
         default_pulse_ms: 10
     c_dt_nibbler_down:
-        number: A1-B0-4
+        number: A0-B0-4
         default_pulse_ms: 10
     c_dt_hermes_up:
-        number: A1-B1-0
-        default_pulse_ms: 20
+        number: A0-B1-0
+        default_pulse_ms: 10
     c_dt_amy_up:
-        number: A1-B1-1
-        default_pulse_ms: 20
+        number: A0-B1-1
+        default_pulse_ms: 10
     c_dt_professor_up:
-        number: A1-B1-2
-        default_pulse_ms: 20
+        number: A0-B1-2
+        default_pulse_ms: 10
     c_dt_zoidberg_up:
-        number: A1-B1-3
-        default_pulse_ms: 20
+        number: A0-B1-3
+        default_pulse_ms: 10
     c_dt_nibbler_up:
-        number: A1-B1-4
-        default_pulse_ms: 20
+        number: A0-B1-4
+        default_pulse_ms: 10
     c_pop_bumper:
-        number: A3-B0-2
-        default_pulse_ms: 18
+        number: A1-B0-2
+        default_pulse_ms: 20
     c_VUK:
-        number: A3-B1-2
+        number: A1-B1-2
         default_pulse_ms: 15
     c_post_left:
-        number: A3-B1-4
+        number: A1-B1-4
         default_pulse_ms: 10
         default_hold_power: .3
     c_magnet:
-        number: A3-B1-1
-        default_pulse_ms: 26
-        default_hold_power: "0.35"
-    c_kickback:
-        number: A3-B0-5
+        number: A1-B1-1
         default_pulse_ms: 20
-    c_gate:
-        number: A3-B0-1
-        default_pulse_ms: 18
-        default_hold_power: "0.35"
+        default_hold_power: "0.40"
+    c_kickback:
+        number: A1-B0-5
+        default_pulse_ms: 20
+#need to verify coil number
+#    c_outlane_gate:
+#        number:
+#        default_pulse_ms: 15
+#        default_hold_power: "0.40"
 
 diverters:
     post_left:
@@ -739,15 +572,16 @@ diverters:
         disable_events: right_post_disable, ball_ending
         targets_when_active: bd_right_post
         targets_when_inactive: playfield
-    outlane_gate:
-        activation_coil: c_gate
-        type: hold
-        activate_events: light_suicide_booth
-        deactivate_events: balldevice_bd_suicide_booth_ball_eject_success, ball_ending,
-        enable_events: mode_base_started,
-        disable_events: outlane_gate_disable
-        targets_when_active: bd_suicide_booth
-        targets_when_inactive: bd_trough
+#outlane gate diverter waiting on coil, switch, and bd configuration
+#    outlane_gate:
+#        activation_coil: c_gate
+#        type: hold
+#        activation_switches: s_left_outlane
+#        deactivate_events: close_outlane_gate, ball_ending
+#        enable_events: outlane_gate_enable
+#        disable_events: outlane_gate_disable
+#        targets_when_active: bd_suicide_booth
+#        targets_when_inactive: playfield
 
 ball_devices:
     bd_trough:
@@ -778,65 +612,49 @@ ball_devices:
         eject_targets: playfield
         entrance_count_delay: 2000ms
         mechanical_eject: true
-    bd_suicide_booth:
-        ball_switches: s_suicide_booth
-        eject_targets: playfield
-        eject_coil: c_kickback
-        eject_timeouts: 2s
+#staging bd_suicide_booth
+#    bd_suicide_booth:
+#        ball_switches: s_suicide_booth
+#        eject_targets: playfield
+#        eject_coil: c_kickback
+#        eject_timeouts: 2s
+
+ball_holds:
+    delivery_start_hold:
+        balls_to_hold: 1
+        hold_devices: bd_VUK
+        enable_events: moon_delivery_lit
+        disable_events: moon_delivery_intro_show_ended
+        release_one_events: moon_delivery_intro_show_ended
 
 drop_targets:
     nibbler:
         switch: s_dt_nibbler
         knockdown_coil: c_dt_nibbler_down
         reset_coil: c_dt_nibbler_up
-        reset_events: reset_nibbler_target
-        max_reset_attempts: 2
     professor:
         switch: s_dt_professor
         knockdown_coil: c_dt_professor_down
         reset_coil: c_dt_professor_up
-        reset_events: reset_professor_target
-        max_reset_attempts: 2
     amy:
         switch: s_dt_amy
         knockdown_coil: c_dt_amy_down
         reset_coil: c_dt_amy_up
-        reset_events: reset_amy_target
-        max_reset_attempts: 2
     hermes:
         switch: s_dt_hermes
         knockdown_coil: c_dt_hermes_down
         reset_coil: c_dt_hermes_up
-        reset_events: reset_hermes_target
-        max_reset_attempts: 2
     zoidberg:
         switch: s_dt_zoidberg
         knockdown_coil: c_dt_zoidberg_down
         reset_coil: c_dt_zoidberg_up
-        reset_events: reset_zoidberg_target
-        max_reset_attempts: 2
 
 drop_target_banks:
     crew_bank:
         drop_targets: nibbler, professor, amy, hermes, zoidberg
-
-show_player:
-    drop_target_bank_crew_bank_down:
-        dt_reset_all_show:
-            loops: 0
-            priority: 500
-    ball_started{is_extra_ball==True}:
-        extra_ball_start_professor_show:
-            loops: 0
-            priority: 200
-    ball_ending:
-        dt_reset_all_show:
-            loops: 0
-            priority: 500
-            speed: 2
-
-
-
+        reset_coils: c_dt_amy_up, c_dt_hermes_up, c_dt_nibbler_up, c_dt_professor_up, c_dt_zoidberg_up
+        reset_on_complete: 1s
+        reset_coil_max_wait_ms: 500ms
 
 autofire_coils:
     ac_slingshot_left:
@@ -867,36 +685,9 @@ flippers:
         main_coil: c_magnet
         activation_switch: s_mag_button
 
-kivy_config:
-    kivy:
-        desktop: 1
-        exit_on_escape: true
-        pause_on_minimize: 0
-    graphics:
-        borderless: true
-        window_state: visible # visible, hidden, maximized, minimized
-        fbo: software # hardware, software, force-hardware
-        fullscreen: false
-        left: 0
-        top: 0
-        width: 3840  # width of display1 + display2
-        height: 1080  # common height (or the maximum of both)
-        maxfps: 30
-        multisamples: 2
-        position: custom # auto, custom
-        show_cursor: true
-        resizable: false
-        rotation: 0
-
 displays:
-    display1:
+    window:
         width: 1920
-        height: 1080
-    display2:
-        width: 1920
-        height: 1080
-    combined_display:
-        width: 3840
         height: 1080
 
 sound_system:
@@ -913,13 +704,6 @@ sound_system:
             type: standard
             simultaneous_sounds: 1
             volume: 0.9
-            ducking:
-                target: music
-                delay: 0
-                attack: 10ms
-                attenuation: 1.0
-                release_point: 0
-                release: 10ms
         sfx:
             type: standard
             simultaneous_sounds: 8
@@ -928,94 +712,52 @@ sound_system:
 machine_vars:
     master_volume:
         initial_value: 0.8
-#these variables set base scoring combined with multipliers to build shot scoring
-    weird_points:
-        initial_value: 13
-    small_reward_points:
-        initial_value: 100
-    medium_reward_points:
-        initial_value: 500
-    large_reward_points:
-        initial_value: 1000
-    ship_points:
-        initial_value: 10
-    pop_points:
-        initial_value: 50
-    target_points:
-        initial_value: 25
-    DT_points:
-        initial_value: 50
-    ramp_points:
-        initial_value: 100
-    loop_points:
-        initial_value: 10
-    orbit_points:
-        initial_value: 10
-    level_2_xp:
-        initial_value: 4
-    level_3_xp:
-        initial_value: 10
-    level_4_xp:
-        initial_value: 25
-    level_5_xp:
-        initial_value: 50
-    level_6_xp:
-        initial_value: 100
-    level_7_xp:
-        initial_value: 250
-
 
 player_vars:
-    caps_to_golden_cap:
-        initial_value: 20
-    PF_multiplier:
-        initial_value: 1
-    bonus_multiplier:
-        initial_value: 1
     leela_level:
-        initial_value: 1
+        initial_value: 0
     leela_xp:
         initial_value: 0
     leela_multiplier:
         initial_value: 1
     fry_level:
-        initial_value: 1
+        initial_value: 0
     fry_xp:
         initial_value: 0
     fry_multiplier:
         initial_value: 1
     bender_level:
-        initial_value: 1
+        initial_value: 0
     bender_xp:
         initial_value: 0
     bender_multiplier:
         initial_value: 1
     amy_level:
-        initial_value: 1
+        initial_value: 0
     amy_xp:
         initial_value: 0
     amy_multiplier:
         initial_value: 1
     hermes_level:
-        initial_value: 1
+        initial_value: 0
     hermes_xp:
         initial_value: 0
     hermes_multiplier:
         initial_value: 1
     zoidberg_level:
-        initial_value: 1
+        initial_value: 0
     zoidberg_xp:
         initial_value: 0
     zoidberg_multiplier:
         initial_value: 1
     nibbler_level:
-        initial_value: 1
+        initial_value: 0
     nibbler_xp:
         initial_value: 0
     nibbler_multiplier:
         initial_value: 1
     professor_level:
-        initial_value: 1
+        initial_value: 0
     professor_xp:
         initial_value: 0
     professor_multiplier:
@@ -1023,12 +765,6 @@ player_vars:
     dark_matter:
         initial_value: 1
     crew_multiplier:
-        initial_value: 1
-    loop_multiplier:
-        initial_value: 1
-    zapp_multiplier:
-        initial_value: 1
-    mom_multiplier:
         initial_value: 1
     platter_long_counter:
         initial_value: 1
@@ -1043,84 +779,33 @@ player_vars:
         initial_value: "empty_gauge"
     hypnotoad_saves:
         initial_value: 0
-    cryolab_delivery_status:
-        value_type: str
-        initial_value: "ready"
     moon_delivery_status:
-        value_type: str
-        initial_value: "ready"
-    cannibalon_delivery_points:
-        initial_value: 0
-    robot_homeworld_delivery_status:
         value_type: str
         initial_value: "ready"
     deliveries_completed:
         initial_value: 0
     caps_collected:
         initial_value: 0
-#cryolab delivery variables used later for random effect
-    dumped_by_michelle:
-        value_type: str
-        initial_value: "no"
-    chose_to_be_frozen:
-        value_type: str
-        initial_value: "not frozen yet"
-#moon_delivery variables for displaying timers
-    crate_delivery_time_remaining:
-        initial_value: 0
-    whalers_on_the_moon_time_remaining:
-        initial_value: 0
-    lunar_rover_time_remaining:
-        initial_value: 0
-    joyride_time_remaining:
-        initial_value: 0
-    escape_farmer_time_remaining:
-        initial_value: 0
-    lunar_lander_time_remaining:
-        initial_value: 0
-#reuseable values for displaying timer values
-    mode_time_remaining1:
-        initial_value: 0
-    mode_time_remaining2:
-        initial_value: 0
 
 modes:
-    - service
     - base
-    - suicide_booth
     - slurm_caps
     - slurm_factory
     - delivery_manager
-    - crew_manager
     - moon_delivery
-    - cryolab_delivery
-    - robot_homeworld_delivery
     - bonus
     - high_score
 
 slides:
-#z values:
-#    background image = 1
-#    video clips = 3
-#    UI = 5
-#    text and numbers = 7
-    dual_screen_slide:
-        - type: display
-          source_display: display1
-          width: 1920
-          height: 1080
-          x: left
-          anchor_x: left
-        - type: display
-          source_display: display2
-          width: 1920
-          height: 1080
-          x: right
-          anchor_x: right
     welcome_slide:
         widgets:
-            - type: image
-              image: scruffy_the_janitor
+            - type: text
+              text: IF YOU SEE THIS, SOMETHING IS WRONG!
+              font_size: 50
+              color: red
+            - type: rectangle
+              width: 240
+              height: 60
     attract_started:
         widgets:
             - type: image
@@ -1149,219 +834,202 @@ slides:
               text: (player1|score)
               number_grouping: true
               min_digits: 2
-              font_size: 50
+              font_size: 45
               color: black
-              y: 920
-              x: 419
-              z: 7
+              y: 108
+              x: 413
               anchor_x: right
               anchor_y: bottom
             - type: text
               text: PLAYER (number)
-              y: 165
-              x: 1130
-              z: 7
-              font_size: 44
+              y: 365
+              x: 20
+              font_size: 50
               anchor_x: left
-              anchor_y: top
+              anchor_y: bottom
             - type: text
               text: BALL (ball)
-              y: 100
-              x: 1130
-              z: 7
+              y: 295
+              x: 20
               anchor_x: left
-              anchor_y: top
-              font_size: 44
+              anchor_y: bottom
+              font_size: 50
             - type: text
               text: (player|bender_level)
-              font_size: 72
+              font_size: 42
               color: black
-              y: 950
-              x: 1750
-              z: 7
+              y: 856
+              x: 520
               anchor_x: right
               anchor_y: bottom
             - type: text
               text: (player|leela_level)
-              font_size: 72
+              font_size: 42
               color: black
-              y: 820
-              x: 1750
-              z: 7
+              y: 856
+              x: 650
               anchor_x: right
               anchor_y: bottom
             - type: text
               text: (player|fry_level)
-              font_size: 72
+              font_size: 42
               color: black
-              y: 690
-              x: 1750
-              z: 7
+              y: 856
+              x: 780
               anchor_x: right
               anchor_y: bottom
             - type: text
               text: (player|nibbler_level)
-              font_size: 72
+              font_size: 42
               color: black
-              y: 560
-              x: 1750
-              z: 7
+              y: 856
+              x: 910
               anchor_x: right
               anchor_y: bottom
             - type: text
               text: (player|professor_level)
-              font_size: 72
+              font_size: 42
               color: black
-              y: 430
-              x: 1750
-              z: 7
+              y: 856
+              x: 1040
               anchor_x: right
               anchor_y: bottom
             - type: text
               text: (player|amy_level)
-              font_size: 72
+              font_size: 42
               color: black
-              y: 300
-              x: 1750
-              z: 7
+              y: 856
+              x: 1170
               anchor_x: right
               anchor_y: bottom
             - type: text
               text: (player|hermes_level)
-              font_size: 72
+              font_size: 42
               color: black
-              y: 170
-              x: 1750
-              z: 7
+              y: 856
+              x: 1300
               anchor_x: right
               anchor_y: bottom
             - type: text
               text: (player|zoidberg_level)
-              font_size: 72
+              font_size: 42
               color: black
-              y: 40
-              x: 1750
-              z: 7
+              y: 856
+              x: 1430
               anchor_x: right
               anchor_y: bottom
             - type: image
-              image: player_and_crew_ui
-              z: 5
-            - type: image
-              image: player_and_ball_overlay
-              z: 5
-              x: center-190
+              image: crew_level_indicators
+              x: 450
+              y: 1080
+              anchor_x: left
+              anchor_y: top
             - type: image
               image: base_background1
-              z: 1
     moon_delivery_slide:
         widgets:
             - type: text
               text: (player1|score)
               number_grouping: true
               min_digits: 2
-              font_size: 50
+              font_size: 45
               color: black
-              y: 920
-              x: 419
-              z: 7
+              y: 108
+              x: 413
+              z: 5
               anchor_x: right
               anchor_y: bottom
             - type: text
               text: PLAYER (number)
-              y: 165
-              x: 1130
-              z: 7
-              font_size: 44
+              y: 274
+              x: 240
+              z: 5
+              font_size: 50
               anchor_x: left
-              anchor_y: top
+              anchor_y: bottom
             - type: text
               text: BALL (ball)
-              y: 100
-              x: 1130
-              z: 7
+              y: 274
+              x: 44
+              z: 5
               anchor_x: left
-              anchor_y: top
-              font_size: 44
+              anchor_y: bottom
+              font_size: 50
             - type: text
               text: (player|bender_level)
-              font_size: 72
+              font_size: 42
               color: black
-              y: 950
-              x: 1750
-              z: 7
+              y: 856
+              x: 757
+              z: 5
               anchor_x: right
               anchor_y: bottom
             - type: text
               text: (player|leela_level)
-              font_size: 72
+              font_size: 42
               color: black
-              y: 820
-              x: 1750
-              z: 7
+              y: 856
+              x: 887
+              z: 5
               anchor_x: right
               anchor_y: bottom
             - type: text
               text: (player|fry_level)
-              font_size: 72
+              font_size: 42
               color: black
-              y: 690
-              x: 1750
-              z: 7
+              y: 856
+              x: 1017
+              z: 5
               anchor_x: right
               anchor_y: bottom
             - type: text
               text: (player|nibbler_level)
-              font_size: 72
+              font_size: 42
               color: black
-              y: 560
-              x: 1750
-              z: 7
+              y: 856
+              x: 1147
+              z: 5
               anchor_x: right
               anchor_y: bottom
             - type: text
               text: (player|professor_level)
-              font_size: 72
+              font_size: 42
               color: black
-              y: 430
-              x: 1750
-              z: 7
+              y: 856
+              x: 1277
+              z: 5
               anchor_x: right
               anchor_y: bottom
             - type: text
               text: (player|amy_level)
-              font_size: 72
+              font_size: 42
               color: black
-              y: 300
-              x: 1750
-              z: 7
+              y: 856
+              x: 1407
+              z: 5
               anchor_x: right
               anchor_y: bottom
             - type: text
               text: (player|hermes_level)
-              font_size: 72
+              font_size: 42
               color: black
-              y: 170
-              x: 1750
-              z: 7
+              y: 856
+              x: 1537
+              z: 5
               anchor_x: right
               anchor_y: bottom
             - type: text
               text: (player|zoidberg_level)
-              font_size: 72
+              font_size: 42
               color: black
-              y: 40
-              x: 1750
-              z: 7
+              y: 856
+              x: 1667
+              z: 5
               anchor_x: right
               anchor_y: bottom
             - type: image
-              image: player_and_crew_ui
-              z: 5
-            - type: image
-              image: player_and_ball_overlay
-              z: 5
-              x: center-190
+              image: luna_park_overlay
+              z: 4
     moon_delivery_intro_slide:
         widgets:
             - type: video
@@ -1398,520 +1066,60 @@ slides:
         widgets:
             - type: image
               image: doop_warning
-    slurm_ad_slide:
-        widgets:
-            - type: image
-              image: slurm_ad
-    cryolab_delivery_slide:
-#this slide has to be here in config
-#if you have it in the mode, then the widgets for players 2-4
-#will only be added to the slide when player1 is up.
-        widgets:
-            - type: text
-              text: (player1|score)
-              number_grouping: true
-              min_digits: 2
-              font_size: 50
-              color: black
-              y: 920
-              x: 419
-              z: 7
-              anchor_x: right
-              anchor_y: bottom
-            - type: text
-              text: PLAYER (number)
-              y: 165
-              x: 1130
-              z: 7
-              font_size: 44
-              anchor_x: left
-              anchor_y: top
-            - type: text
-              text: BALL (ball)
-              y: 100
-              x: 1130
-              z: 7
-              anchor_x: left
-              anchor_y: top
-              font_size: 44
-            - type: image
-              image: cryolab_UI
-              z: 5
-            - type: image
-              image: player_and_ball_overlay
-              z: 5
-              x: center-190
-    reusable_delivery_slide:
-#other than adding widgets for players 2-4 in multiplayer games, only add and
-#remove widgets from this slide in delivery modes, so the widgets are removed
-#when the mode ends and the slide is reset for the next delivery mode
-        widgets:
-            - type: text
-              text: (player1|score)
-              number_grouping: true
-              min_digits: 2
-              font_size: 50
-              color: black
-              y: 920
-              x: 419
-              z: 7
-              anchor_x: right
-              anchor_y: bottom
-            - type: text
-              text: PLAYER (number)
-              y: 165
-              x: 1130
-              z: 7
-              font_size: 44
-              anchor_x: left
-              anchor_y: top
-            - type: text
-              text: BALL (ball)
-              y: 100
-              x: 1130
-              z: 7
-              anchor_x: left
-              anchor_y: top
-              font_size: 44
-            - type: text
-              text: (player|bender_level)
-              font_size: 72
-              color: black
-              y: 950
-              x: 1750
-              z: 7
-              anchor_x: right
-              anchor_y: bottom
-            - type: text
-              text: (player|leela_level)
-              font_size: 72
-              color: black
-              y: 820
-              x: 1750
-              z: 7
-              anchor_x: right
-              anchor_y: bottom
-            - type: text
-              text: (player|fry_level)
-              font_size: 72
-              color: black
-              y: 690
-              x: 1750
-              z: 7
-              anchor_x: right
-              anchor_y: bottom
-            - type: text
-              text: (player|nibbler_level)
-              font_size: 72
-              color: black
-              y: 560
-              x: 1750
-              z: 7
-              anchor_x: right
-              anchor_y: bottom
-            - type: text
-              text: (player|professor_level)
-              font_size: 72
-              color: black
-              y: 430
-              x: 1750
-              z: 7
-              anchor_x: right
-              anchor_y: bottom
-            - type: text
-              text: (player|amy_level)
-              font_size: 72
-              color: black
-              y: 300
-              x: 1750
-              z: 7
-              anchor_x: right
-              anchor_y: bottom
-            - type: text
-              text: (player|hermes_level)
-              font_size: 72
-              color: black
-              y: 170
-              x: 1750
-              z: 7
-              anchor_x: right
-              anchor_y: bottom
-            - type: text
-              text: (player|zoidberg_level)
-              font_size: 72
-              color: black
-              y: 40
-              x: 1750
-              z: 7
-              anchor_x: right
-              anchor_y: bottom
-            - type: image
-              image: player_and_crew_ui
-              z: 5
-            - type: image
-              image: player_and_ball_overlay
-              z: 5
-              x: center-190
-    slurm_factory_slide:
-        widgets:
-            - type: text
-              text: (player1|score)
-              number_grouping: true
-              min_digits: 2
-              font_size: 50
-              color: black
-              y: 920
-              x: 419
-              z: 7
-              anchor_x: right
-              anchor_y: bottom
-            - type: text
-              text: PLAYER (number)
-              y: 165
-              x: 1130
-              z: 7
-              font_size: 44
-              anchor_x: left
-              anchor_y: top
-            - type: text
-              text: BALL (ball)
-              y: 100
-              x: 1130
-              z: 7
-              anchor_x: left
-              anchor_y: top
-              font_size: 44
-            - type: text
-              text: (player|bender_level)
-              font_size: 72
-              color: black
-              y: 950
-              x: 1750
-              z: 7
-              anchor_x: right
-              anchor_y: bottom
-            - type: text
-              text: (player|leela_level)
-              font_size: 72
-              color: black
-              y: 820
-              x: 1750
-              z: 7
-              anchor_x: right
-              anchor_y: bottom
-            - type: text
-              text: (player|fry_level)
-              font_size: 72
-              color: black
-              y: 690
-              x: 1750
-              z: 7
-              anchor_x: right
-              anchor_y: bottom
-            - type: text
-              text: (player|nibbler_level)
-              font_size: 72
-              color: black
-              y: 560
-              x: 1750
-              z: 7
-              anchor_x: right
-              anchor_y: bottom
-            - type: text
-              text: (player|professor_level)
-              font_size: 72
-              color: black
-              y: 430
-              x: 1750
-              z: 7
-              anchor_x: right
-              anchor_y: bottom
-            - type: text
-              text: (player|amy_level)
-              font_size: 72
-              color: black
-              y: 300
-              x: 1750
-              z: 7
-              anchor_x: right
-              anchor_y: bottom
-            - type: text
-              text: (player|hermes_level)
-              font_size: 72
-              color: black
-              y: 170
-              x: 1750
-              z: 7
-              anchor_x: right
-              anchor_y: bottom
-            - type: text
-              text: (player|zoidberg_level)
-              font_size: 72
-              color: black
-              y: 40
-              x: 1750
-              z: 7
-              anchor_x: right
-              anchor_y: bottom
-            - type: image
-              image: player_and_crew_ui
-              z: 5
-            - type: image
-              image: player_and_ball_overlay
-              z: 5
-              x: center-190
-            - type: video
-              video: slurm_factory_clip0
-    zoidberg_ball_save_slide:
+# maybe depreciate this, I haven't been able to get it to work correctly yet
+# it's supposed to play random videos from a video_pool as part of attract mode
+    attract_video_slide:
         widgets:
             - type: video
-              video: im_the_hero
-              z: 9
-    service_home_slide:
-        widgets:
-            - type: image
-              image: service_home
-              z: 5
-    service_main_menu_slide:
-        widgets:
-            - type: image
-              image: service_main_menu
-              z: 10
-    service_power_slide:
-        widgets:
-            - type: image
-              image: service_power
-    extra_ball_start_professor_slide:
-        widgets:
-            - type: video
-              video: extra_ball_professor_clip
-              z: 1
+              video: attract_videos
+
 
 widget_player:
     player_added{num==2}:
-        base_player2_scoring:
+        player2_scoring:
             slide: base_slide
-        cryolab_player2_scoring:
-            slide: cryolab_delivery_slide
-        moon_player2_scoring:
-            slide: moon_delivery_slide
-        reusable_player2_scoring:
-            slide: reusable_delivery_slide
-        slurm_player2_scoring:
-            slide: slurm_factory_slide
     player_added{num==3}:
-        base_player3_scoring:
+        player3_scoring:
             slide: base_slide
-        cryolab_player3_scoring:
-            slide: cryolab_delivery_slide
-        moon_player3_scoring:
-            slide: moon_delivery_slide
-        reusable_player3_scoring:
-            slide: reusable_delivery_slide
-        slurm_player3_scoring:
-            slide: slurm_factory_slide
     player_added{num==4}:
-        base_player4_scoring:
+        player4_scoring:
             slide: base_slide
-        cryolab_player4_scoring:
-            slide: cryolab_delivery_slide
-        moon_player4_scoring:
-            slide: moon_delivery_slide
-        reusable_player4_scoring:
-            slide: reusable_delivery_slide
-        slurm_player4_scoring:
-            slide: slurm_factory_slide
 
 widgets:
-    extra_ball_text_background:
-        - type: image
-          image: extra_ball_text_background
-          z: 3
-    extra_ball_text:
+    player2_scoring:
         - type: text
-          text: PLAYER (number) SHOOT AGAIN
+          text: (player2|score)
+          number_grouping: true
+          min_digits: 2
+          font_size: 45
           color: black
-          font_size: 150
-          y: 300
+          y: 108
+          x: 875
           z: 5
-    base_player2_scoring:
-        - type: text
-          text: (player2|score)
-          number_grouping: true
-          min_digits: 2
-          font_size: 50
-          color: black
-          y: 655
-          x: 419
-          z: 7
           anchor_x: right
           anchor_y: bottom
-    cryolab_player2_scoring:
-        - type: text
-          text: (player2|score)
-          number_grouping: true
-          min_digits: 2
-          font_size: 50
-          color: black
-          y: 655
-          x: 419
-          z: 7
-          anchor_x: right
-          anchor_y: bottom
-    moon_player2_scoring:
-        - type: text
-          text: (player2|score)
-          number_grouping: true
-          min_digits: 2
-          font_size: 50
-          color: black
-          y: 655
-          x: 419
-          z: 7
-          anchor_x: right
-          anchor_y: bottom
-    reusable_player2_scoring:
-        - type: text
-          text: (player2|score)
-          number_grouping: true
-          min_digits: 2
-          font_size: 50
-          color: black
-          y: 655
-          x: 419
-          z: 7
-          anchor_x: right
-          anchor_y: bottom
-    slurm_player2_scoring:
-        - type: text
-          text: (player2|score)
-          number_grouping: true
-          min_digits: 2
-          font_size: 50
-          color: black
-          y: 655
-          x: 419
-          z: 7
-          anchor_x: right
-          anchor_y: bottom
-    base_player3_scoring:
+    player3_scoring:
         - type: text
           text: (player3|score)
           number_grouping: true
           min_digits: 2
-          font_size: 50
+          font_size: 45
           color: black
-          y: 410
-          x: 419
-          z: 7
+          y: 108
+          x: 1335
+          z: 5
           anchor_x: right
           anchor_y: bottom
-    cryolab_player3_scoring:
-        - type: text
-          text: (player3|score)
-          number_grouping: true
-          min_digits: 2
-          font_size: 50
-          color: black
-          y: 410
-          x: 419
-          z: 7
-          anchor_x: right
-          anchor_y: bottom
-    moon_player3_scoring:
-        - type: text
-          text: (player3|score)
-          number_grouping: true
-          min_digits: 2
-          font_size: 50
-          color: black
-          y: 410
-          x: 419
-          z: 7
-          anchor_x: right
-          anchor_y: bottom
-    reusable_player3_scoring:
-        - type: text
-          text: (player3|score)
-          number_grouping: true
-          min_digits: 2
-          font_size: 50
-          color: black
-          y: 410
-          x: 419
-          z: 7
-          anchor_x: right
-          anchor_y: bottom
-    slurm_player3_scoring:
-        - type: text
-          text: (player3|score)
-          number_grouping: true
-          min_digits: 2
-          font_size: 50
-          color: black
-          y: 410
-          x: 419
-          z: 7
-          anchor_x: right
-          anchor_y: bottom
-    base_player4_scoring:
+    player4_scoring:
         - type: text
           text: (player4|score)
           number_grouping: true
           min_digits: 2
-          font_size: 50
+          font_size: 45
           color: black
-          y: 165
-          x: 419
-          z: 7
-          anchor_x: right
-          anchor_y: bottom
-    cryolab_player4_scoring:
-        - type: text
-          text: (player4|score)
-          number_grouping: true
-          min_digits: 2
-          font_size: 50
-          color: black
-          y: 165
-          x: 419
-          z: 7
-          anchor_x: right
-          anchor_y: bottom
-    moon_player4_scoring:
-        - type: text
-          text: (player4|score)
-          number_grouping: true
-          min_digits: 2
-          font_size: 50
-          color: black
-          y: 165
-          x: 419
-          z: 7
-          anchor_x: right
-          anchor_y: bottom
-    reusable_player4_scoring:
-        - type: text
-          text: (player4|score)
-          number_grouping: true
-          min_digits: 2
-          font_size: 50
-          color: black
-          y: 165
-          x: 419
-          z: 7
-          anchor_x: right
-          anchor_y: bottom
-    slurm_player4_scoring:
-        - type: text
-          text: (player4|score)
-          number_grouping: true
-          min_digits: 2
-          font_size: 50
-          color: black
-          y: 165
-          x: 419
-          z: 7
+          y: 108
+          x: 1795
+          z: 5
           anchor_x: right
           anchor_y: bottom
     empty_gauge:
@@ -1939,70 +1147,6 @@ widgets:
           image: scoreboxes_overlay
 
 widget_styles:
-    fry_xp_show_style:
-        font_size: 60
-        color: orange
-        y: 690
-        x: 1670
-        z: 9
-        anchor_x: right
-        anchor_y: bottom
-    bender_xp_show_style:
-        font_size: 60
-        color: gray
-        y: 950
-        x: 1670
-        z: 9
-        anchor_x: right
-        anchor_y: bottom
-    leela_xp_show_style:
-        font_size: 60
-        color: purple
-        y: 820
-        x: 1670
-        z: 9
-        anchor_x: right
-        anchor_y: bottom
-    amy_xp_show_style:
-        font_size: 60
-        color: hotpink
-        y: 300
-        x: 1670
-        z: 9
-        anchor_x: right
-        anchor_y: bottom
-    hermes_xp_show_style:
-        font_size: 60
-        color: brown
-        y: 170
-        x: 1670
-        z: 9
-        anchor_x: right
-        anchor_y: bottom
-    nibbler_xp_show_style:
-        font_size: 60
-        color: red
-        y: 560
-        x: 1670
-        z: 9
-        anchor_x: right
-        anchor_y: bottom
-    professor_xp_show_style:
-        font_size: 60
-        color: tan
-        y: 430
-        x: 1670
-        z: 9
-        anchor_x: right
-        anchor_y: bottom
-    zoidberg_xp_show_style:
-        font_size: 60
-        color: salmon
-        y: 45
-        x: 1670
-        z: 9
-        anchor_x: right
-        anchor_y: bottom 
     attract_mode_high_score_display_label:
         font_size: 40
         anchor_x: right
@@ -2034,47 +1178,6 @@ widget_styles:
         x: center+60
         number_grouping: true
         min_digits: 1
-    medium:
-        font_size: 40
-        adjust_top: 1
-        adjust_bottom: 1
-    small:
-        font_size: 30
-        adjust_top: 2
-        adjust_bottom: 3
-    level_up_header:
-        font_size: 120
-        x: center+400
-        y: 850
-        color: black
-    level_up_award1:
-        font_size: 60
-        x: center+400
-        y: 650
-        color: black
-    level_up_award2:
-        font_size: 60
-        x: center+400
-        y: 575
-        color: black
-    level_up_award3:
-        font_size: 60
-        x: center+400
-        y: 500
-        color: black
-    level_up_award4:
-        font_size: 60
-        x: center+400
-        y: 425
-        color: black
-    delivery_mode_timer:
-        font_size: 240
-        z: 4
-        x: center-25%
-        y: center+10%
-        color: white
-
-
 assets:
     sounds:
         default:
@@ -2104,25 +1207,7 @@ images:
     crew_level_indicators:
         load: preload
 
-image_pools:
-    HQ_interior:
-        type: random_force_all
-        images:
-            - crew_hangout
-            - zoidbergs_office
-            - loading_ship_in_hanger
-            - watching_tv_at_work
-            - conference_table
 sound_pools:
-    shoot_the_ball_sounds:
-        type: random_force_all
-        track: voice
-        sounds:
-            - this_could_take_all_day
-            - man_im_bored
-            - come_on_mon
-            - bender_trumpet
-            - did_someone_call_me
     lrrr_pop_bumper:
         type: random_force_all
         track: sfx
@@ -2148,16 +1233,12 @@ sound_pools:
             - ship_short3
             - ship_short4
             - ship_short5
-
     leela_short:
         type: random_force_all
         track: sfx
         sounds:
             - leela_short1
             - leela_short2
-            - leela_attacks
-            - leela_got_it
-            - leela_come_on
     fry_short:
         type: random_force_all
         track: sfx
@@ -2168,18 +1249,12 @@ sound_pools:
             - fry_short4
             - fry_short5
             - fry_short6
-            - fry_great
-            - fry_fff-ahhh
     nibbler_short:
         type: random_force_all
         track: sfx
         sounds:
             - nibbler_short1
             - nibbler_short2
-            - nibbler_weird_growls
-            - nibbler_happy_purrs
-            - nibbler_anxious_whining
-            - nibbler_grumbles
     zoidberg_short:
         type: random_force_all
         track: sfx
@@ -2187,7 +1262,6 @@ sound_pools:
             - zoidberg_short1
             - zoidberg_short2
             - zoidberg_short3
-            - zoidberg_disappointed_ahhh
     amy_short:
         type: random_force_all
         track: sfx
@@ -2195,29 +1269,18 @@ sound_pools:
             - amy_short1
             - amy_short2
             - amy_short3
-            - amy_what
-            - amy_why
-            - amy_whoa
     hermes_short:
         type: random_force_all
         track: sfx
         sounds:
             - hermes_short1
-            - hermes_sweet_gorilla
-            - hermes_my_god
-            - hermes_lower_than_a_limbo
-            - hermes_you_got_it_mon
-            - hermes_you_rang
-            - hermes_criminally_inefficient
+            - hermes_short2
     bender_short:
         type: random_force_all
         track: sfx
         sounds:
             - bender_short1
             - bender_short2
-            - bender_hey
-            - bender_giggles
-            - bender_what
     professor_short:
         type: random_force_all
         track: sfx
@@ -2225,9 +1288,6 @@ sound_pools:
             - professor_short1
             - professor_short2
             - professor_short3
-            - professor_nonsense
-            - professor_completely_mad
-            - professor_nice
     hypnotoad_short:
         type: random_force_all
         track: sfx
@@ -2237,14 +1297,10 @@ sound_pools:
             - hypnotoad3
     hedonismbot_sounds:
         type: random_force_all
-        track: voice
+        track: sfx
         sounds:
             - hedonismbot1
             - hedonismbot2
-            - hedonismbot_no_need_to_explain
-            - hedonismbot_how_delightful
-            - hedonismbot_room_for_one_more
-            - nibbler_if_youre_propositioning
     drain_sounds:
         type: random_force_all
         track: voice
@@ -2257,20 +1313,6 @@ sound_pools:
             - a_thing_called_showmanship
             - have_a_nice_future
             - doomed_harmony
-            - haha_you_missed
-            - these_things_happen
-            - someone_get_a_mop
-            - terrible_just_terrible
-            - youre_all_fired
-            - bender_hey_trying_to_score
-            - hermes_severely_reduced_pay
-            - fry_time_makes_fools
-    good_ball_drain_sounds:
-        type: random_force_all
-        track: voice
-        sounds:
-            - professor_well_done
-            - professor_good_enough
     ball_save_sounds:
         type: random_force_all
         track: voice
@@ -2278,71 +1320,13 @@ sound_pools:
             - dont_giveup_crybabies
             - were_safe
             - not_gonna_be_loser
-            - dont_want_people_say_im_incompetent
-            - fry_nothing_is_over_as_long_as
-    fry_level_up_sounds:
+
+video_pools:
+    attract_videos:
         type: random_force_all
-        track: voice
-        sounds:
-            - fry_alright
-    bender_level_up_sounds:
-        type: random_force_all
-        track: voice
-        sounds:
-            - bender_let_me_explain
-            - bender_now_i_get_it
-            - bender_its_all_coming_together
-            - hermes_conrad_grade_36
-    leela_level_up_sounds:
-        type: random_force_all
-        track: voice
-        sounds:
-            - leela_i_have_better_idea
-    nibbler_level_up_sounds:
-        type: random_force_all
-        track: voice
-        sounds:
-            - nibbler_im_also_an_intelligent
-            - nibbler_time_you_treated_respect
-            - nibbler_if_i_have_to_get_cute
-            - nibbler_i_pledge_loyalty
-    zoidberg_level_up_sounds:
-        type: random_force_all
-        track: voice
-        sounds:
-            - when_i_see_two_body_parts
-    amy_level_up_sounds:
-        type: random_force_all
-        track: voice
-        sounds:
-            - amy_its_working
-            - amy_heres_my_new_theory
-            - amy_chinese_swearing
-    hermes_level_up_sounds:
-        type: random_force_all
-        track: voice
-        sounds:
-            - hermes_sweet_bongo_congo
-            - hermes_requisition_me_a_beat
-            - hermes_lifelong_love_of_bureaucracy
-            - hermes_increase_efficiency_4_percent
-            - hermes_drums1
-    professor_level_up_sounds:
-        type: random_force_all
-        track: voice
-        sounds:
-            - sciencing_as_fast_as
-            - professor_preposterous_twaddlecock
-            - professor_im_trying_run_business
-            - professor_red_tape_and_regulations
-    bender_topper_sounds:
-        type: random_force_all
-        track: voice
-        sounds:
-            - worlds_sexiest_killing_machine
-            - bender_let_us_match_wits
-            - boo_its_just_bender
-            - bender_evil_laugh1
+        videos:
+            - homemade_intro_silent_clip
+            - PE_commercial_clip
 
 sound_player:
     s_hedonism_bot_active:
@@ -2350,31 +1334,8 @@ sound_player:
             action: play
 
 slide_player:
-    mc_ready:
-        dual_screen_slide:
-            target: combined_display
-    init_done:
-        welcome_slide:
-            target: display1
+    init_done: welcome_slide
+    mode_attract_started: attract_started
     game_ending:
         final_score_slide:
             expire: 30s
-            target: display1
-    service_door_opened:
-        service_home_slide:
-            target: display1
-        service_power_slide:
-            target: display2
-    service_main_menu:
-        service_main_menu_slide:
-            target: display1
-    sw_service_door_open_inactive:
-        attract_started:
-            target: display2
-        service_main_menu_slide:
-            action: remove
-        service_home_slide:
-            action: remove
-    service_mode_exited:
-        service_home_slide:
-            action: remove

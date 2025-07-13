@@ -1,9 +1,0 @@
-#show_version=6
-##! show: shoot_the_ball_show
-
-    - duration: 300ms
-      lights:
-          l_cryopod: "000000"
-    - duration: 300ms
-      lights:
-          l_cryopod: ffffff

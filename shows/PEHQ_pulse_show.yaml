@@ -1,9 +1,0 @@
-#show_version=6
-##! show: PEHQ_pulse_show
-
-    - duration: 300ms
-      lights:
-          HQ: off
-    - duration: 300ms
-      lights:
-          HQ: white

@@ -1,9 +1,0 @@
-#show_version=6
-##! show: lander_r_shot_show
-
-    - duration: 200ms
-      lights:
-          l_right_ramp_insert: "000000"
-    - duration: 200ms
-      lights:
-          l_right_ramp_insert: ffffff

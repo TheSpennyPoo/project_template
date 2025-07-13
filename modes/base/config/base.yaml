@@ -2,79 +2,65 @@
 mode:
     start_events: ball_started
     priority: 100
-    events_when_started: reset_drop_targets_with_show
 
 state_machines:
-  #delivery_started will set this to ignore, delivery_ended will restart it
-    mom_zapp_toggle_state:
-        starting_state: mom
+    fuel_gauge_state:
         persist_state: true
         states:
-            mom:
+            start:
                 label: Start state
-                events_when_started: mom_shot_lit
-            zapp:
-                label: zapp
-                events_when_started: zapp_shot_lit
-            ignore:
-                label: off
+                events_when_started: empty_tank
+            quarter:
+                events_when_started: quarter_tank
+            half:
+                events_when_started: half_tank
+            3quarter:
+                events_when_started: 3quarter_tank
+            full:
+                events_when_started: full_tank
         transitions:
-            - source: mom
-              target: zapp
-              events: mom_zapp_toggle
-            - source: zapp
-              target: mom
-              events: mom_zapp_toggle
-            - source: mom
-              target: ignore
-              events: mom_zapp_off
-            - source: zapp
-              target: ignore
-              events: mom_zapp_off
-            - source: ignore
-              target: zapp
-              events: mom_zapp_on
-#mom/zapp shot logic:
-#outside of deliveries, hitting the left ramp toggles the state machine between
-#mom and zapp and starts a timer based on the state
-#the shot is lit and light show starts when the timer does and end when
-#the shot is hit, the timer runs out, or the state machine is toggled again
+            - source: start
+              target: quarter
+              events: collect_dark_matter_fuel_hit
+            - source: quarter
+              target: half
+              events: collect_dark_matter_fuel_hit
+            - source: half
+              target: 3quarter
+              events: collect_dark_matter_fuel_hit
+            - source: 3quarter
+              target: full
+              events: collect_dark_matter_fuel_hit
+            - source: full
+              target: 3quarter
+              events: use_dark_matter
+            - source: 3quarter
+              target: half
+              events: use_dark_matter
+            - source: half
+              target: quarter
+              events: use_dark_matter
+            - source: quarter
+              target: start
+              events: use_dark_matter
+            - source: half
+              target: start
+              events: use_half_tank
+            - source: 3quarter
+              target: quarter
+              events: use_half_tank
+            - source: full
+              target: half
+              events: use_half_tank
+
 
 ball_saves:
     ball_start_ball_save:
-        active_time: "+15s"
+        active_time: "+10s"
         hurry_up_time: 6s
-        enable_events: mode_base_started
-        timer_start_events: sw_playfield_active
-        auto_launch: true
-        balls_to_save: 2
-        grace_period: 3s
-    zoidberg_ball_save:
-        active_time: 6s
-        hurry_up_time: 2s
-        enable_events: zoidberg_ball_save_shot_hit
+        timer_start_events: s_shooter_lane_inactive
         auto_launch: true
         balls_to_save: 1
-    delivery_started_ball_save:
-        active_time: 15s
-        hurry_up_time: 5s
-        enable_events: mode_moon_delivery_started, mode_robot_homeworld_delivery_started,
-        timer_start_events: s_left_ramp_active
-        auto_launch: true
-        balls_to_save: 1
-        grace_period: 3s
-    pazuzu_ball_save:
-        active_time: 50s
-        hurry_up_time: 10s
-        enable_events: start_pazuzu_ball_save
-        auto_launch: true
-        balls_to_save: 1
-
-extra_balls:
-    professor_extra_ball:
-        award_events: award_professor_extra_ball
-        max_per_game: 2
-
 
 shows:
     zoidberg_happy_show:
@@ -114,6 +100,8 @@ shows:
           events: zoidberg_l16
         - duration: 5
           events: zoidberg_l20
+        - duration: 10
+          events: zoidberg_reset
         - duration: 1
           events: zoidberg_neutral
     zoidberg_sad_show:
@@ -153,145 +141,20 @@ shows:
           events: zoidberg_r16
         - duration: 5
           events: zoidberg_r20
+        - duration: 10
+          events: zoidberg_reset
         - duration: 1
           events: zoidberg_neutral
-
-slides:
-    PFD_base_slide:
-        widgets:
-            - type: image
-              image: HQ_interior
-              z: 1
-    the_zapp_brannigan_slide:
-        widgets:
-            - type: video
-              video: the_zapp_brannigan_clip
-    zapp_and_kif_slide:
-        widgets:
-            - type: video
-              video: zapp_and_kif_clip
-    zapp_velour_slide:
-        widgets:
-            - type: video
-              video: zapp_velour_clip
-    zapp_tries_seductive_slide:
-        widgets:
-            - type: video
-              video: zapp_tries_seductive_clip
-    zapp_25_star_general_slide:
-        widgets:
-            - type: video
-              video: zapp_25_star_general_clip
-    its_mom_slide:
-        widgets:
-            - type: video
-              video: its_mom_clip
-    moms_robot_oil_slide:
-        widgets:
-            - type: video
-              video: moms_robot_oil_clip
-    mom_suit_slide:
-        widgets:
-            - type: video
-              video: mom_suit_clip
-    mom_wont_rest_slide:
-        widgets:
-            - type: video
-              video: mom_wont_rest_clip
-    mom_what_needs_to_be_done_slide:
-        widgets:
-            - type: video
-              video: mom_what_needs_to_be_done_clip
-    pazuzu_ball_save_slide:
-        widgets:
-            - type: video
-              video: pazuzu_save_clip
-
 
 light_player:
     mode_base_started:
         indicator: ffffff
         ship: ffffff
         loops: ffffff
-    mode_slurm_factory_stopped:
-        gi:
-            color: "000000"
-            priority: 111
-        apron:
-            color: "000000"
-            priority: 110
     remove_hypnotoad_slide:
         l_left_spotlight: ffffff
-    player_shot_zoidberg_ball_save_shot_enabled{value==True}:
-        l_right_outlane: "000000"
-    ball_save_zoidberg_ball_save_saving_ball:
-        l_right_outlane: ffffff
-    player_PF_multiplier{value==1}:
-        l_2x: ffffff
-        l_3x: ffffff
-    player_PF_multiplier{value==2}:
-        l_2x: "000000"
-        l_3x: ffffff
-    player_PF_multiplier{value==3}:
-        l_2x: ffffff
-        l_3x: "000000"
-    player_PF_multiplier{value==5}:
-        l_2x: "000000"
-        l_3x: "000000"
-    suicide_booth_active:
-        l_suicide_booth: "000000"
-    suicide_booth_empty:
-        l_suicide_booth: "ffffff"
-
 
 show_player:
-    s_hedonism_bot_active:
-        clear_VUK_show:
-            loops: 0
-            priority: 999
-    reset_drop_targets_with_show:
-        dt_reset_all_show:
-            loops: 0
-            priority: 200
-    ball_save_zoidberg_ball_save_saving_ball:
-        zoidberg_ball_save_show:
-            action: play
-            loops: 0
-            priority: 200
-    ball_save_pazuzu_ball_save_saving_ball:
-        pazuzu_ball_save_show:
-            action: play
-            loops: 0
-            priority: 200
-    ball_save_pazuzu_ball_save_enabled:
-        ball_save_indicator_show:
-            loops: -1
-            priority: 205
-    ball_save_pazuzu_ball_save_hurry_up:
-        ball_save_indicator_show:
-            action: stop
-        ball_save_hurry_up_indicator_show:
-            loops: 3
-            priority: 205
-    ball_save_pazuzu_ball_save_disabled:
-        ball_save_indicator_show:
-            action: stop
-        ball_save_hurry_up_indicator_show:
-            action: stop
-    ball_save_ball_start_ball_save_enabled:
-        ball_save_indicator_show:
-            loops: -1
-            priority: 204
-    ball_save_ball_start_ball_save_hurry_up:
-        ball_save_indicator_show:
-            action: stop
-        ball_save_hurry_up_indicator_show:
-            loops: 1
-            priority: 204
-    ball_save_ball_start_ball_save_disabled:
-        ball_save_indicator_show:
-            action: stop
-
     mode_base_started:
         zoidberg_neutral_show:
             loops: -1
@@ -315,6 +178,9 @@ show_player:
     ball_save_ball_start_ball_save_saving_ball:
         ball_save_indicator_show:
             loops: 0
+    balldevice_bd_right_post_ball_entered:
+        right_post_lock_show:
+            loops: 0
     s_mag_button_active:
         hypnotoad_light_pulse_show:
             loops: -1
@@ -330,186 +196,216 @@ show_player:
     s_pop_bumper_active:
         lrrr_pulse_show:
             loops: 0
+    fry_level1:
+        fry_level_up_show:
+            loops: 0
+    fry_level2:
+        fry_level_up_show:
+            loops: 0
+    fry_level3:
+        fry_level_up_show:
+            loops: 0
+    leela_level1:
+        leela_level_up_show:
+            loops: 0
+    leela_level2:
+        leela_level_up_show:
+            loops: 0
+    leela_level3:
+        leela_level_up_show:
+            loops: 0
+    bender_level1:
+        bender_level_up_show:
+            loops: 0
+    bender_level2:
+        bender_level_up_show:
+            loops: 0
+    bender_level3:
+        bender_level_up_show:
+            loops: 0
     base_tube_shot_hit:
         tube_light_show:
             loops: 0
-    timer_mom_shot_timer_started:
-        mom_lit_show:
-            loops: -1
-        zapp_lit_show:
-            action: stop
-    timer_mom_shot_timer_stopped:
-        mom_lit_show:
-            action: stop
-    timer_zapp_shot_timer_started:
-        zapp_lit_show:
-            loops: -1
-        mom_lit_show:
-            action: stop
-    timer_zapp_shot_timer_stopped:
-        zapp_lit_show:
-            action: stop
-    mom_shot_hit:
-        mom_shows:
-            action: play
-            loops: 0
-    zapp_shot_hit:
-        zapp_shows:
-            action: play
-            loops: 0
-    temporary_lamp_test:
-        custom_flash_show:
-            action: play
-            show_tokens:
-                which: l_right_outlane
-                color: "000000"
-            loops: 10
 
 slide_player:
-    mode_base_started:
+    mode_base_started: base_slide
+    mode_moon_delivery_started:
         base_slide:
-            target: display1
-        PFD_base_slide:
-            target: display2
+            action: remove
+        moon_delivery_slide:
+            action: play
+    mode_moon_delivery_stopped:
+        base_slide:
+            action: play
+        moon_delivery_slide:
+            action: remove
     remove_hypnotoad_slide:
         hypnotoad_slide:
             action: remove
 
-show_pools:
-    mom_shows:
-        shows:
-            - its_mom_show
-            - moms_robot_oil_show
-            - mom_suit_show
-            - mom_wont_rest_show
-            - mom_what_needs_to_be_done_show
-    zapp_shows:
-        shows:
-            - the_zapp_brannigan_show
-            - zapp_and_kif_show
-            - zapp_velour_show
-            - zapp_tries_seductive_show
-            - zapp_25_star_general_show
-
+widget_player:
+    mode_base_started:
+        empty_gauge:
+            slide: base_slide
+    empty_tank:
+        empty_gauge:
+            slide: base_slide
+    quarter_tank:
+        quarter_gauge:
+            slide: base_slide
+    half_tank:
+        half_gauge:
+            slide: base_slide
+    3quarter_tank:
+        3quarter_gauge:
+            slide: base_slide
+    full_tank:
+        full_gauge:
+            slide: base_slide
 
 variable_player:
-    drop_target_bank_crew_bank_down:
-        score: 111 * current_player.crew_multiplier * current_player.PF_multiplier
-        crew_multiplier: 1
-        amy_xp: 1
-        zoidberg_xp: 1
-        professor_xp: 1
-        hermes_xp: 1
-        nibbler_xp: 1
     base_fry_target_shot_hit:
-        score: machine.target_points * current_player.fry_multiplier * current_player.PF_multiplier
+        score: 100 * current_player.fry_multiplier
         fry_xp: 1
     base_leela_target_shot_hit:
-        score: machine.target_points * current_player.leela_multiplier * current_player.PF_multiplier
+        score: 100 * current_player.leela_multiplier
         leela_xp: 1
     base_bender_target_shot_hit:
-        score: machine.target_points * current_player.bender_multiplier * current_player.PF_multiplier
+        score: 100 * current_player.bender_multiplier
         bender_xp: 1
     s_dt_amy_active:
-        score: machine.DT_points * current_player.amy_multiplier * current_player.PF_multiplier
-        amy_xp: 2
+        score: 500 * current_player.amy_multiplier
+        amy_xp: 1
     s_dt_hermes_active:
-        score: machine.DT_points * current_player.hermes_multiplier * current_player.PF_multiplier
-        hermes_xp: 2
+        score: 500 * current_player.hermes_multiplier
+        hermes_xp: 1
     s_dt_nibbler_active:
-        score: machine.DT_points * current_player.nibbler_multiplier * current_player.PF_multiplier
-        nibbler_xp: 2
+        score: 500 * current_player.nibbler_multiplier
+        nibbler_xp: 1
     s_dt_zoidberg_active:
-        score: machine.DT_points * current_player.zoidberg_multiplier * current_player.PF_multiplier
-        zoidberg_xp: 2
+        score: 500 * current_player.zoidberg_multiplier
+        zoidberg_xp: 1
     s_dt_professor_active:
-        score: machine.DT_points * current_player.professor_multiplier * current_player.PF_multiplier
-        professor_xp: 2
+        score: 500 * current_player.professor_multiplier
+        professor_xp: 1
+    s_right_orbit_active:
+        score: 150
     s_pe_platter_active:
-        score: machine.ship_points * current_player.crew_multiplier * current_player.PF_multiplier
+        score: 33 * current_player.crew_multiplier
         platter_short_counter: 1
         platter_long_counter: 1
+    leela_level1:
+        leela_level: 1
+        leela_multiplier: 1
+    leela_level2:
+        leela_level: 1
+        leela_multiplier: 1
+        crew_multiplier: 1
+    leela_level3:
+        leela_level: 1
+        leela_multiplier: 1
+    fry_level1:
+        fry_level: 1
+        fry_multiplier: 1
+    fry_level2:
+        fry_level: 1
+        fry_multiplier: 1
+        crew_multiplier: 1
+    fry_level3:
+        fry_level: 1
+        fry_multiplier: 1
+    bender_level1:
+        bender_level: 1
+        bender_multiplier: 1
+    bender_level2:
+        bender_level: 1
+        bender_multiplier: 1
+        crew_multiplier: 1
+    bender_level3:
+        bender_level: 1
+        bender_multiplier: 1
+    amy_level1:
+        amy_level: 1
+        amy_multiplier: 1
+    amy_level2:
+        amy_level: 1
+        amy_multiplier: 1
+        crew_multiplier: 1
+    amy_level3:
+        amy_level: 1
+        amy_multiplier: 1
+    hermes_level1:
+        hermes_level: 1
+        hermes_multiplier: 1
+    hermes_level2:
+        hermes_level: 1
+        hermes_multiplier: 1
+        crew_multiplier: 1
+    hermes_level3:
+        hermes_level: 1
+        hermes_multiplier: 1
+    nibbler_level1:
+        nibbler_level: 1
+        nibbler_multiplier: 1
+    nibbler_level2:
+        nibbler_level: 1
+        nibbler_multiplier: 1
+        crew_multiplier: 1
+    nibbler_level3:
+        nibbler_level: 1
+        nibbler_multiplier: 1
+    zoidberg_level1:
+        zoidberg_level: 1
+        zoidberg_multiplier: 1
+    zoidberg_level2:
+        zoidberg_level: 1
+        zoidberg_multiplier: 1
+        crew_multiplier: 1
+    zoidberg_level3:
+        zoidberg_level: 1
+        zoidberg_multiplier: 1
+    professor_level1:
+        proefessor_level: 1
+        professor_multiplier: 1
+    professor_level2:
+        professor_level: 1
+        professor_multiplier: 1
+        crew_multiplier: 1
+    professor_level3:
+        professor_level: 1
+        professor_multiplier: 1
     right_loop_hit:
-        score: machine.loop_points * current_player.loop_multiplier * current_player.PF_multiplier
+        score: 150
     left_loop_hit:
-        score: machine.loop_points * current_player.loop_multiplier * current_player.PF_multiplier
+        score: 150
     left_right_double_loop_hit:
-        score: machine.loop_points * current_player.loop_multiplier * 3 * current_player.PF_multiplier
-        loop_multiplier: 1
+        score: 1000
     right_left_double_loop_hit:
-        score: machine.loop_points * current_player.loop_multiplier * 3 * current_player.PF_multiplier
-        loop_multiplier: 1
+        score: 1000
     double_left_loop_hit:
-        score: machine.loop_points * current_player.loop_multiplier * 2 * current_player.PF_multiplier
-        loop_multiplier: 1
+        score: 500
     double_right_loop_hit:
-        score: machine.loop_points * current_player.loop_multiplier * 2 * current_player.PF_multiplier
-        loop_multiplier: 1
+        score: 500
     s_pop_bumper_active:
-        score: machine.pop_points * current_player.pop_bumper_hits * current_player.PF_multiplier
-    base_lrrr_shot_hit:
+        score: 50 * current_player.pop_bumper_hits
         pop_bumper_hits: 1
-    base_right_ramp_shot_hit:
+    s_right_ramp_active:
         dark_matter: 1
-        score: machine.ramp_points * current_player.nibbler_level * current_player.PF_multiplier
+        score: 75 * current_player.nibbler_level
     hypnotoad_save_hit:
         hypnotoad_saves: 1
-        score: machine.large_reward_points * current_player.PF_multiplier
-    long_right_orbit_hit:
-        score: machine.orbit_points * current_player.zapp_multiplier * current_player.mom_multiplier * current_player.PF_multiplier
-    short_right_orbit_hit:
-        score: machine.orbit_points * (current_player.zapp_multiplier + current_player.mom_multiplier) * current_player.PF_multiplier
-    base_right_inlane_shot_hit:
-        score: machine.weird_points * current_player.zoidberg_multiplier * current_player.PF_multiplier
-    base_left_inlane_shot_hit:
-        score: machine.weird_points * current_player.PF_multiplier
+        score: 1000
     mode_base_started:
         platter_short_counter:
             int: 0
             action: set
-        pop_bumper_hits:
-            int: 1
-            action: set
     base_tube_shot_hit:
-        score: machine.ramp_points * (current_player.fry_multiplier) * (current_player.leela_multiplier) * (current_player.bender_multiplier) * current_player.PF_multiplier
+        score: 25 * (current_player.fry_level + 1) * (current_player.leela_level + 1) * (current_player.bender_level + 1)
     slurm_caps_total_shot_hit:
         slurm_caps_total: 1
-    base_slingshot_shot_hit:
-        score: 25 * current_player.hermes_multiplier * current_player.amy_multiplier * current_player.PF_multiplier
-    mom_shot_hit:
-        score: machine.orbit_points * current_player.mom_multiplier * current_player.professor_multiplier * 45 * current_player.PF_multiplier
-        mom_multiplier: 1
-    zapp_shot_hit:
-        score: machine.orbit_points * current_player.zapp_multiplier * current_player.leela_multiplier * 45 * current_player.PF_multiplier
-        zapp_multiplier: 1
-    zoidberg_ball_save_shot_hit:
-        score: 250 * current_player.zoidberg_multiplier * current_player.PF_multiplier
-        zoidberg_xp: 5
-    timer_amy_PF_multiplier_timer_started:
-        PF_multiplier: 1
-    timer_amy_PF_multiplier_timer_stopped:
-        PF_multiplier:
-            int: 1
-            action: set
-#slurm factory mode checks amy_level when it starts and +1 PF_multiplier
-#during the mode if amy_level > 3,
-    amy_slurm_x_check{current_player.amy_level > 3}:
-        PF_mutliplier: 1
-    amy_slurm_x_reset{current_player.amy_level > 3}:
-        PF_multiplier: -1
-    reset_caps_to_golden:
-        caps_to_golden_cap: 25
+
 sound_player:
-    timer_shoot_the_ball_timer_complete:
-        shoot_the_ball_sounds:
-            action: play
-    delivery_ended:
-        theme_full:
-            action: play
-    delivery_started:
-        theme_full:
-            action: stop
-    base_lrrr_shot_hit:
+    s_pop_bumper_active:
         lrrr_pop_bumper:
             action: play
     base_tube_shot_hit:
@@ -521,7 +417,7 @@ sound_player:
     left_loop_hit:
         crew_whoa2:
             action: play
-    ship_spinning_hit:
+    s_pe_platter_active:
         ship_short:
             action: play
     mode_base_started:
@@ -533,10 +429,6 @@ sound_player:
     ball_will_end:
         theme_full:
             action: stop
-    ball_will_end{current_player.score > ((current_player.ball) * 25000)}:
-        good_ball_drain_sounds:
-            action: play
-    ball_will_end{current_player.score < ((current_player.ball) * 25000)}:
         drain_sounds:
             action: play
     base_fry_target_shot_hit:
@@ -562,6 +454,15 @@ sound_player:
             action: play
     s_dt_nibbler_active:
         nibbler_short:
+            action: play
+    quarter_tank:
+        ding:
+            action: play
+    half_tank:
+        ding:
+            action: play
+    3quarter_tank:
+        ding:
             action: play
     ball_save_ball_start_ball_save_saving_ball:
         ball_save_sounds:
@@ -642,7 +543,44 @@ sound_player:
         level_up:
             action: play
 
+event_player:
+    s_t_leela_active{current_player.leela_xp == 4}: leela_level1
+    s_t_leela_active{current_player.leela_xp == 12}: leela_level2
+    s_t_leela_active{current_player.leela_xp == 25}: leela_level3
+    s_t_fry_active{current_player.fry_xp == 4}: fry_level1
+    s_t_fry_active{current_player.fry_xp == 12}: fry_level2
+    s_t_fry_active{current_player.fry_xp == 25}: fry_level3
+    s_t_bender_active{current_player.bender_xp == 4}: bender_level1
+    s_t_bender_active{current_player.bender_xp == 12}: bender_level2
+    s_t_bender_active{current_player.bender_xp == 25}: bender_level3
+    s_dt_amy_active{current_player.amy_xp == 2}: amy_level1
+    s_dt_amy_active{current_player.amy_xp == 5}: amy_level2
+    s_dt_amy_active{current_player.amy_xp == 15}: amy_level3
+    s_dt_hermes_active{current_player.hermes_xp == 2}: hermes_level1
+    s_dt_hermes_active{current_player.hermes_xp == 5}: hermes_level2
+    s_dt_hermes_active{current_player.hermes_xp == 15}: hermes_level3
+    s_dt_nibbler_active{current_player.nibbler_xp == 2}: nibbler_level1
+    s_dt_nibbler_active{current_player.nibbler_xp == 5}: nibbler_level2
+    s_dt_nibbler_active{current_player.nibbler_xp == 15}: nibbler_level3
+    s_dt_zoidberg_active{current_player.zoidberg_xp == 2}: zoidberg_level1
+    s_dt_zoidberg_active{current_player.zoidberg_xp == 5}: zoidberg_level2
+    s_dt_zoidberg_active{current_player.zoidberg_xp == 15}: zoidberg_level3
+    s_dt_professor_active{current_player.professor_xp == 2}: professor_level1
+    s_dt_professor_active{current_player.professor_xp == 5}: professor_level2
+    s_dt_professor_active{current_player.professor_xp == 15}: professor_level3
+    start_left_loop_lock_hurry: right_post_enable
+    timer_left_loop_lock_hurry_complete: right_post_disable
+    right_post_lock_show_stopped: post_right_down
+    post_right_down: right_post_disable
+
 timers:
+    left_loop_lock_hurry:
+        start_value: 8
+        end_value: 0
+        direction: down
+        control_events:
+            - action: start
+              event: start_left_loop_lock_hurry
     ship_spinning_timer:
         start_value: 6
         end_value: 0
@@ -654,73 +592,8 @@ timers:
             - action: add
               event: s_pe_platter_active
               value: 1
-    fry_shot_debounce:
-        start_value: 2
-        end_value: 0
-        direction: down
-        control_events:
-            - action: start
-              event: base_fry_target_shot_hit
-    leela_shot_debounce:
-        start_value: 2
-        end_value: 0
-        direction: down
-        control_events:
-            - action: start
-              event: base_leela_target_shot_hit
-    bender_shot_debounce:
-        start_value: 2
-        end_value: 0
-        direction: down
-        control_events:
-            - action: start
-              event: base_bender_target_shot_hit
-    shoot_the_ball_timer:
-        start_value: 0
-        end_value: 30
-        direction: up
-        control_events:
-            - action: restart
-              event: s_shooter_lane_active
-            - action: stop
-              event: s_shooter_lane_inactive
-            - action: restart
-              event: timer_shoot_the_ball_timer_complete
-    mom_shot_timer:
-        start_value: 30
-        end_value: 0
-        direction: down
-        control_events:
-            - action: restart
-              event: mom_shot_lit
-            - action: stop
-              event: mom_shot_hit
-            - action: stop
-              event: zapp_shot_lit
-            - action: stop
-              event: mom_zapp_off
-    zapp_shot_timer:
-        start_value: 30
-        end_value: 0
-        direction: down
-        control_events:
-            - action: restart
-              event: zapp_shot_lit
-            - action: stop
-              event: zapp_shot_hit
-            - action: stop
-              event: mom_shot_lit
-    amy_PF_multiplier_timer:
-        start_value: 30
-        end_value: 0
-        direction: down
-        control_events:
-            - action: restart
-              event: amy_PF_multiplier_start
 
 
-event_player:
-    base_tube_shot_hit: mom_zapp_toggle
 
 shots:
     ship_spinning:
@@ -729,78 +602,31 @@ shots:
         disable_events: timer_ship_spinning_timer_started, delivery_started
     base_tube_shot:
         switch: s_left_ramp
-        enable_events: mode_base_started, mode_moon_delivery_stopped, delivery_ended
-        disable_events: mode_moon_delivery_started, delivery_started
+        enable_events: mode_base_started, mode_moon_delivery_stopped
+        disable_events: mode_moon_delivery_started
     base_fry_target_shot:
         switch: s_t_fry
-        enable_events: mode_base_started, mode_moon_delivery_stopped, delivery_ended, timer_fry_shot_debounce_complete
-        disable_events: mode_moon_delivery_started, delivery_started, timer_fry_shot_debounce_started
+        enable_events: mode_base_started, mode_moon_delivery_stopped
+        disable_events: mode_moon_delivery_started
     base_bender_target_shot:
         switch: s_t_bender
-        enable_events: mode_base_started, mode_moon_delivery_stopped, delivery_ended, timer_bender_shot_debounce_complete
-        disable_events: mode_moon_delivery_started, delivery_started, timer_bender_shot_debounce_started
+        enable_events: mode_base_started, mode_moon_delivery_stopped
+        disable_events: mode_moon_delivery_started
     base_leela_target_shot:
         switch: s_t_leela
-        enable_events: mode_base_started, mode_moon_delivery_stopped, delivery_ended, timer_leela_shot_debounce_complete
-        disable_events: mode_moon_delivery_started, delivery_started, timer_leela_shot_debounce_started
+        enable_events: mode_base_started, mode_moon_delivery_stopped
+        disable_events: mode_moon_delivery_started
     slurm_caps_total_shot:
         switches: s_cap1, s_cap2, s_cap3, s_cap4
-        enable_events: mode_cryolab_delivery_stopped
-        disable_events: mode_cryolab_delivery_started
-    mom_shot:
-        switch: s_r_orbit
-        enable_events: timer_mom_shot_timer_started
-        disable_events: timer_mom_shot_timer_stopped, mom_zapp_off, delivery_started
-    zapp_shot:
-        switch: s_r_orbit
-        enable_events: timer_zapp_shot_timer_started
-        disable_events: timer_zapp_shot_timer_stopped, mom_zapp_off, delivery_started
-    base_right_ramp_shot:
-        switch: s_right_ramp
-        enable_events: mode_base_started, mode_cryolab_delivery_stopped
-        disable_events: mode_moon_delivery_started, mode_cryolab_delivery_started
-    base_right_loop_enter:
-        switch: s_right_loop
-        enable_events: mode_base_started, delivery_ended
-        disable_events: delivery_started
-        delay_switch:
-            s_left_loop: 3s
-    base_left_loop_enter:
-        switch: s_left_loop
-        enable_events: mode_base_started, delivery_ended
-        disable_events: delivery_started
-        delay_switch:
-            s_right_loop: 3s
-    base_lrrr_shot:
-        switch: s_pop_bumper
-        enable_events: mode_base_started, delivery_ended
-        disable_events: delivery_started
-    base_slingshot_shot:
-        switches: s_right_sling, s_left_sling
-        enable_events: mode_base_started, delivery_ended
-        disable_events: delivery_started
-    zoidberg_ball_save_shot:
-        switches: s_r_outlane
-        persist_enable: true
-        enable_events: zoidberg_level2, zoidberg_level3, zoidberg_level4, zoidberg_level5
-        disable_events: ball_save_zoidberg_ball_save_saving_ball
-    base_right_inlane_shot:
-        switches: s_cap1 #s_cap1 = right inlane switch
-        delay_switch:
-            s_right_ramp: 5s
-            s_right_flipper: 3s
-    base_left_inlane_shot:
-        switches: s_left_inlane
-        delay_switch:
-            s_left_ramp: 5s
-            s_left_flipper: 3s
+
+
 
 sequence_shots:
     right_loop:
-        event_sequence: base_right_loop_enter_hit, s_left_loop_active
+        switch_sequence: s_right_loop, s_left_loop
         sequence_timeout: 3s
     left_loop:
-        event_sequence: base_left_loop_enter_hit, s_right_loop_active
+        switch_sequence: s_left_loop, s_right_loop
         sequence_timeout: 3s
     left_right_double_loop:
         event_sequence: left_loop_hit, right_loop_hit
@@ -817,9 +643,3 @@ sequence_shots:
     hypnotoad_save:
         switch_sequence: s_mag_button, s_left_inlane
         sequence_timeout: 5s
-    long_right_orbit:
-        switch_sequence: s_r_orbit, s_left_loop
-        sequence_timeout: 4s
-    short_right_orbit:
-        switch_sequence: s_r_orbit, s_right_loop
-        sequence_timeout: 4s

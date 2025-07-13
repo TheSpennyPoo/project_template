@@ -3,7 +3,7 @@ mode_settings:
     display_delay_ms: 2000
     bonus_entries:
     - event: bonus_caps
-      score: (current_player.slurm_caps_total * 25 * current_player.fry_multiplier)
+      score: (current_player.slurm_caps_total * 25 * (1 + current_player.fry_level))
     - event: bonus_hypnotoad_saves
       score: (current_player.hypnotoad_saves * 250)
     - event: bonus_dark_matter
@@ -45,7 +45,7 @@ slides:
     hypnotoad_bonus:
         widgets:
             - type: text
-              text: Toad Bonus
+              text: Hypnotoad Saves Bonus
               font_size: 60
               color: black
               y: 774
@@ -82,31 +82,11 @@ slides:
               anchor_y: bottom
             - type: image
               image: bonus_dark_matter_slide
-    bonus_multiplier_slide:
-        widgets:
-            - type: text
-              text: Multiplier
-              font_size: 60
-              color: black
-              y: 672
-              x: 1170
-              anchor_x: left
-              anchor_y: bottom
-            - type: text
-              text: (player|bonus_multiplier)x
-              font_size: 60
-              color: black
-              y: 572
-              x: 1170
-              anchor_x: left
-              anchor_y: bottom
-            - type: video
-              video: bonus_multiplier_clip
     bonus_total_slide:
         widgets:
             - type: text
               text: TOTAL BONUS
-              font_size: 60
+              font_size: 42
               color: black
               y: 672
               x: 1170
@@ -114,7 +94,7 @@ slides:
               anchor_y: bottom
             - type: text
               text: (score)
-              font_size: 60
+              font_size: 42
               color: black
               y: 572
               x: 1170
@@ -124,21 +104,8 @@ slides:
               image: bonus_blank
 
 slide_player:
-    mode_bonus_started:
-        bonus_start_slide:
-            target: display1
-    bonus_caps:
-        slurm_bonus:
-            target: display1
-    bonus_hypnotoad_saves:
-        hypnotoad_bonus:
-            target: display1
-    bonus_dark_matter:
-        dark_matter_bonus:
-            target: display1
-    bonus_subtotal:
-        bonus_multiplier_slide:
-            target: display1
-    bonus_total:
-        bonus_total_slide:
-            target: display1
+    mode_bonus_started: bonus_start_slide
+    bonus_caps: slurm_bonus
+    bonus_hypnotoad_saves: hypnotoad_bonus
+    bonus_dark_matter: dark_matter_bonus
+    bonus_total: bonus_total_slide
