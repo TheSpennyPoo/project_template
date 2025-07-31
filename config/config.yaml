@@ -18,7 +18,7 @@ light_settings:
 
 lights:
   #CHANGE THIS
-    l_right_corner:
+    shoot_again:
         number: 1-0-1-2
         platform_settings:
             polarity: false
@@ -96,7 +96,7 @@ coils:
     c_pop_bumper:
         number: A1-B0-2
         default_pulse_ms: 20
-        
+
 ball_devices:
     bd_trough:
         ball_switches: s_trough1, s_trough2, s_trough3, s_trough_jam
@@ -130,6 +130,9 @@ playfields:
         default_source_device: bd_plunger
 
 flippers:
+#these flippers are setup for dual-wound coils, computer controlled
+#to switch from high power to hold power automatically when the flipper button
+#is held down --no end of stroke switch required
     left_flipper:
         main_coil: c_flipper_left_main
         hold_coil: c_flipper_left_hold
