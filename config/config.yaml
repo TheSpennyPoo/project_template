@@ -192,7 +192,7 @@ slides:
     attract_started:
         widgets:
             - type: image
-              image: ADD ME
+              image: ADD_ME
     final_score_slide:
         widgets:
             - type: text
@@ -205,12 +205,6 @@ slides:
               anchor_y: top
             - type: image
               image: final_score
-    hypnotoad_slide:
-        widgets:
-            - type: video
-              video: hypnotoad_clip
-              height: 1080
-              width: 1920
     base_slide:
         widgets:
             - type: text

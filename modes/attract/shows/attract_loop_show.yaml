@@ -165,7 +165,3 @@
                 text: (machine|score9_value)
                 style: attract_mode_high_score_display_score
                 y: top-680
-    - time: "+500ms"
-      lights:
-          l_right_corner: off
-    
